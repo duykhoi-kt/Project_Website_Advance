@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hóa Đơn</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: #f8f9fa;
+        margin: 0;
+        padding: 20px;
+      }
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      p {
+        margin: 5px 0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: #fff;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      .total {
+        margin-top: 20px;
+        font-size: 18px;
+        font-weight: bold;
+      }
+      .btn-back {
+        margin-top: 20px;
+        padding: 10px 15px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      .btn-back:hover {
+        background-color: #218838;
+      }
+
+      /* Responsive */
+      @media only screen and (max-width: 425px) {
+        table,
+        th,
+        td {
+          font-size: 12px;
+          padding: 8px;
+        }
+        img {
+          width: 40px;
+        }
+      }
+      @media only screen and (min-width: 426px) and (max-width: 768px) {
+        table,
+        th,
+        td {
+          font-size: 14px;
+          padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="invoice-container">
+      <h2>HÓA ĐƠN MUA HÀNG</h2>
+      <p><strong>Mã hóa đơn:</strong> <span id="invoice-id"></span></p>
+      <p><strong>Ngày mua:</strong> <span id="purchase-date"></span></p>
+      <p><strong>Tên khách hàng:</strong> <span id="customer-name"></span></p>
+      <p><strong>Số điện thoại:</strong> <span id="customer-phone"></span></p>
+      <p><strong>Địa chỉ:</strong> <span id="customer-address"></span></p>
+      <table>
+        <thead>
+          <tr>
+            <th>Sản phẩm</th>
+            <th>Hình ảnh</th>
+            <th>Số lượng</th>
+            <th>Giá</th>
+            <th>Thành tiền</th>
+          </tr>
+        </thead>
+        <tbody id="invoice-body">
+          <!-- Dữ liệu sẽ được thêm từ JavaScript -->
+        </tbody>
+      </table>
+      <div class="total">
+        <strong>Tổng cộng: </strong> <span id="total-price">0đ</span>
+      </div>
+      <button class="btn-back" onclick="goBack()">Quay lại giỏ hàng</button>
+    </div>
+
+    <script>
+      function generateInvoiceID() {
+        return "HD" + Math.floor(Math.random() * 1000000);
+      }
+
+      function getCurrentDate() {
+        let today = new Date();
+        return today.toLocaleDateString("vi-VN");
+      }
+
+      function loadInvoice() {
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        let customer = JSON.parse(localStorage.getItem("customer")) || {};
+        let tbody = document.getElementById("invoice-body");
+        let total = 0;
+        tbody.innerHTML = "";
+
+        cart.forEach((item) => {
+          let subtotal = item.price * item.quantity;
+          total += subtotal;
+
+          let row = `<tr>
+                    <td>${item.name}</td>
+                    <td><img src="${item.image}" alt="${item.name}"></td>
+                    <td>${item.quantity}</td>
+                    <td>${item.price.toLocaleString()}đ</td>
+                    <td>${subtotal.toLocaleString()}đ</td>
+                </tr>`;
+          tbody.innerHTML += row;
+        });
+
+        document.getElementById("total-price").textContent =
+          total.toLocaleString() + "đ";
+        document.getElementById("invoice-id").textContent = generateInvoiceID();
+        document.getElementById("purchase-date").textContent = getCurrentDate();
+        document.getElementById("customer-name").textContent =
+          customer.name || "Không có";
+        document.getElementById("customer-phone").textContent =
+          customer.phone || "Không có";
+        document.getElementById("customer-address").textContent =
+          customer.address || "Không có";
+      }
+
+      function goBack() {
+        window.location.href = "san-pham.html"; // Quay lại trang giỏ hàng
+      }
+
+      loadInvoice();
+    </script>
+  </body>
+</html>
